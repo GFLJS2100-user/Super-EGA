@@ -139,6 +139,7 @@ IFDEF	VGA
 	DD	0000000FFh		; mode 11, 640x480 graphics, 1 38k pln
 	DD	0FFFFFFFFh		; mode 12, 640x480 graphics, 4 38k plns
 	DD	0000000FFh		; mode 13, 320x200x8 graphics, 1 64k pln
+	DD	0FFFFFFFFh		; mode 14h, 800x600 graphics
 ENDIF
 
     ;
@@ -170,6 +171,7 @@ IFDEF	VGA
 	DD	000000003h		; mode 11, 640x480 graphics, 1 38k pln
 	DD	003030303h		; mode 12, 640x480 graphics, 4 38k plns
 	DD	0000000FFh		; mode 13, 320x200x8 graphics, 1 64k pln
+	DD	003030303h		; mode 14h, 800x600 graphics
 ENDIF
 
     ;
@@ -200,6 +202,7 @@ IFDEF	VGA
 	DD	0000000FFh		; mode 11, 640x480 graphics, 1 38k pln
 	DD	0FFFFFFFFh		; mode 12, 640x480 graphics, 4 38k plns
 	DD	0000000FFh		; mode 13, 320x200x8 graphics, 1 64k pln
+	DD	0FFFFFFFFh		; mode 14h, 800x600 graphics
 ENDIF
 
     ;
@@ -230,6 +233,7 @@ IFDEF	VGA
 	DD	0000000FFh		; mode 11, 640x480 graphics, 1 38k pln
 	DD	0FFFFFFFFh		; mode 12, 640x480 graphics, 4 38k plns
 	DD	0000000FFh		; mode 13, 320x200x8 graphics, 1 64k pln
+	DD	0FFFFFFFFh		; mode 14h, 800x600 graphics
 ENDIF
 
 VxD_DATA_ENDS
