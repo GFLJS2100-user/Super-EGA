@@ -27,6 +27,7 @@
 
 IFDEF	VGA
 	INCLUDE vga.inc
+	INCLUDE superega.inc
 
 ;******************************************************************************
 ; EXTRN routines
@@ -34,6 +35,7 @@ IFDEF	VGA
 VxD_CODE_SEG
 	EXTRN	VDD_Get_Mode:NEAR
 	EXTRN	VDD_Mem_Chg:NEAR
+	EXTRN	VDD_Mem_AMain:NEAR
 VxD_CODE_ENDS
 
 ;******************************************************************************
@@ -1538,6 +1540,102 @@ BeginProc ATi_ExtRegs_PreSR, PUBLIC
 ATiER_PS_Exit:
         ret
 EndProc ATi_ExtRegs_PreSR
+
+BeginProc VDD_Set_SuperEGA_Mode, PUBLIC
+    ; Set the memory allocation for the new mode
+    mov al, 14h
+    call VDD_Mem_AMain
+    SetFlag [edi.VDD_Flags], fVDD_256
+
+    ; Disable screen output
+    mov dx, pStatColr
+    in al, dx
+    mov dx, pAttrEGA
+    mov al, 0
+    out dx, al
+
+    ; Write Misc Output Register
+    mov dx, pMiscEGA
+    mov al, SuperEGA_ModeData_Misc
+    out dx, al
+
+    ; Write Sequencer Registers
+    mov cx, 5
+    lea si, SuperEGA_ModeData_SEQ
+    mov dx, pSeqIndx
+    xor ah, ah
+Set_SEQ_Loop:
+    mov al, ah
+    out dx, al
+    inc dx
+    lodsb
+    out dx, al
+    dec dx
+    inc ah
+    loop Set_SEQ_Loop
+
+    ; Unlock CRTC Registers
+    mov dx, pIndx6845Colr
+    mov al, 11h
+    out dx, al
+    inc dx
+    in al, dx
+    and al, 7Fh
+    out dx, al
+    dec dx
+
+    ; Write CRTC Registers
+    mov cx, 18
+    lea si, SuperEGA_ModeData_CRTC
+    mov dx, pIndx6845Colr
+    xor ah, ah
+Set_CRTC_Loop:
+    mov al, ah
+    out dx, al
+    inc dx
+    lodsb
+    out dx, al
+    dec dx
+    inc ah
+    loop Set_CRTC_Loop
+
+    ; Write Graphics Controller Registers
+    mov cx, 9
+    lea si, SuperEGA_ModeData_GC
+    mov dx, pGrpIndx
+    xor ah, ah
+Set_GC_Loop:
+    mov al, ah
+    out dx, al
+    inc dx
+    lodsb
+    out dx, al
+    dec dx
+    inc ah
+    loop Set_GC_Loop
+
+    ; Write Attribute Controller Registers
+    mov cx, 21
+    lea si, SuperEGA_ModeData_AC
+    mov dx, pAttrEGA
+    xor ah, ah
+Set_AC_Loop:
+    mov al, ah
+    out dx, al
+    lodsb
+    out dx, al
+    inc ah
+    loop Set_AC_Loop
+
+    ; Enable screen output
+    mov dx, pStatColr
+    in al, dx
+    mov dx, pAttrEGA
+    mov al, 20h
+    out dx, al
+
+    ret
+EndProc VDD_Set_SuperEGA_Mode
 
 ;******************************************************************************
 ;

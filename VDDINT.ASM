@@ -32,6 +32,7 @@
 ; EXTRN routines and data
 ;
 VxD_CODE_SEG
+	EXTRN	VDD_Set_SuperEGA_Mode:NEAR
 	EXTRN	VDD_IO_SetTrap:NEAR
 	EXTRN	VDD_Detach2:NEAR
 	EXTRN	VDD_Mem_I10Done:NEAR
@@ -151,6 +152,8 @@ VI10ExitEmYes:
 	ret
 
 VI10NotTTY:
+	cmp	ax, 6Fh			    ; Q: Set Super EGA mode?
+	je	VI10_Set_Super_EGA	    ;	Y: Go do it
 	cmp	ah,2			    ; Q: Set cursor posn?
 	je	VI10SetCurs		    ;	Y: Go do it
 	or	ah,ah			    ; Q: Mode setting?
